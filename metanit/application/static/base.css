@@ -1,0 +1,192 @@
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    display: block;
+    margin: 0 auto; /* Center the image */
+    max-width: 60%; /* Adjust width to be a bit smaller */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover;
+}
+
+/* Rest of your styles */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f7f7f7;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Header */
+h1.display-4 {
+    color: #380bdb; /* Primary color */
+    font-weight: bold;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #333;
+    font-weight: 600;
+    padding-right: 30px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-content {
+    font-size: 0.875rem;
+    color: #555;
+}
+
+/* Like button */
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+button:hover {
+    color: #e74c3c;
+    transform: scale(1.1);
+}
+
+/* Badge and Category */
+.badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Tagging and Creators Section */
+.text-muted {
+    color: #7f8c8d !important;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Category and Creator Information */
+.d-flex.align-items-center {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.d-flex i {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    .sidebar-nav ul {
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-img-top {
+        height: 200px;
+    }
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #2c3150;
+    color: #ecf0f1;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #24244d;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.sidebar-nav li {
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-nav li:hover {
+    background-color: #34495e;
+}
+
+.sidebar-nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block;
+    font-size: 1.1rem;
+}
+
+/* Background Gradients */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+}
+
+.bg-info {
+    background-color: #17a2b8;
+}
+
+.bg-opacity-10 {
+    background-color: rgba(23, 162, 184, 0.1) !important;
+}

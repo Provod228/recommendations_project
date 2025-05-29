@@ -91,7 +91,6 @@ class Content(models.Model):
 class User(AbstractUser):
     content_like = models.ManyToManyField(
         Content,
-        null=True,
         verbose_name="Контент который нравится пользователю",
         help_text="Введите контент который нравится пользователю",
     )
@@ -127,3 +126,23 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class UserInteraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE)
+    rating = models.FloatField(
+        validators=[MinValueValidator(0.0), MaxValueValidator(10.0)],
+        null=True,
+        blank=True
+    )
+    viewed = models.BooleanField(default=False)
+    liked = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    time_spent = models.FloatField(default=0.0)  # в минутах
+
+    class Meta:
+        unique_together = ('user', 'content')
+
+    def __str__(self):
+        return self.user.id

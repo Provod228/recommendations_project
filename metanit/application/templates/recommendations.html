@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Рекомендации для вас</h1>
+
+<div class="row">
+    {% for content in recommended_content %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ content.image.url }}" class="card-img-top" alt="{{ content.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ content.title }}</h5>
+                    <p class="card-text">{{ content.summery|truncatechars:100 }}</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+    <div class="col-12">
+        <p>Не удалось загрузить рекомендации. Вот популярный контент:</p>
+        {% for content in recommendation_engine.get_popular_content %}
+        <div class="col-md-4 mb-4">
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Title{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Меню</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{% url 'content-list' %}">Главная</a></li>
+                    <li><a href="{% url 'recommendations' %}">Рекомендации</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}">Профиль</a></li>
+                        <li>
+                            <a href="#" id="logout-link">Выход</a>
+                            <script>
+                                // Ждем, пока DOM полностью загрузится
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var logoutLink = document.getElementById('logout-link');
+
+                                    // Проверяем, найден ли элемент
+                                    if (logoutLink) {
+                                        logoutLink.addEventListener('click', function(e) {
+                                            e.preventDefault();
+
+                                            // Создаем форму динамически
+                                            var form = document.createElement('form');
+                                            form.method = 'post';
+                                            form.action = "{% url 'logout' %}";
+                                            form.style.display = 'none';
+
+                                            // Добавляем CSRF-токен
+                                            var csrfToken = document.createElement('input');
+                                            csrfToken.type = 'hidden';
+                                            csrfToken.name = 'csrfmiddlewaretoken';
+                                            csrfToken.value = '{{ csrf_token }}';
+                                            form.appendChild(csrfToken);
+
+                                            // Добавляем форму в DOM, отправляем и удаляем
+                                            document.body.appendChild(form);
+                                            form.submit();
+                                            document.body.removeChild(form);
+                                        });
+                                    } else {
+                                        console.error('Элемент с id="logout-link" не найден');
+                                    }
+                                });
+                            </script>
+                        </li>
+
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Вход</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
