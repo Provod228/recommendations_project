@@ -7,9 +7,65 @@
     <p>Email: {{ profile.email }}</p>
     <p>Имя: {{ profile.first_name }}</p>
     <p>Фамилия: {{ profile.last_name }}</p>
-    <p>Вывод списка контента который нравится пользователю:</p>
-    {% for item in liked_content %}
-        <img src="{{ item.image }}" alt="{{ item.title }}">
-        {{ item.title }}
-    {% endfor %}
+    <h2 class="mb-4">Контент, который вам нравится:</h2>
+    <div class="container my-5">
+        {% if content %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for item in content %}
+                <div class="col">
+                    <a href="{% url 'content-detail' item.id %}" class="card-link">
+                        <div class="card h-100 shadow-lg border-0 overflow-hidden">
+                            <div class="card h-100 shadow-lg border-0 overflow-hidden">
+                                <div style="position: relative;">
+                                    <h2 class="card-title fw-bold text-truncate" style="padding-right: 30px;">{{ item.title }}</h2>
+                                    <form method="post" action="{% url 'content-like' item.id %}" style="position: absolute; top: 0; right: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                                            ❤️  <!-- Всегда сердечко, так как это лайкнутый контент -->
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {% if item.image %}
+                                <div class="position-relative">
+                                    <img src="{{ item.image }}" class="card-img-top">
+                                </div>
+                                {% endif %}
+
+                                <div class="card-body pb-0">
+                                    <p class="card-content content-">Оценка контента: {{ item.evaluation }}</p>
+                                    <p class="card-text text-muted">Описание: {{ item.summery|truncatechars:100 }}</p>
+
+                                    <!-- Категория -->
+                                    <div class="mb-3">
+                                        <span class="badge bg-info bg-opacity-10 text-info fs-6">
+                                            <i class="bi bi-tag-fill"></i>Тип контента: {{ item.type_content.title_type }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Создатели -->
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-people-fill text-muted me-2 fs-5"></i>
+                                        <small class="text-muted">
+                                            Создатели:
+                                            {% for creator_content in item.creator %}
+                                                {{ creator_content.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center py-4">
+                <i class="bi bi-exclamation-circle-fill fs-1 d-block mb-3"></i>
+                <h4 class="fw-bold">У вас пока нет любимого контента</h4>
+                <p class="mb-0">Отметьте понравившийся контент сердечком ❤️</p>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

@@ -2,60 +2,107 @@
 
 {% block content %}
     <div class="container my-5">
+        <!-- Поисковая строка с фильтрами и сортировкой -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form method="get" class="row g-3">
+                    <!-- Поисковая строка -->
+                    <div class="col-md-6">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Поиск по названию, описанию, типу..."
+                               value="{{ search_query }}">
+                    </div>
+
+                    <!-- Фильтр по типам контента -->
+                    <div class="col-md-3">
+                        <select name="type_content" class="form-select" multiple aria-label="Фильтр по типам">
+                            {% for type in type_content_choices %}
+                                <option value="{{ type.0 }}"
+                                    {% if type.0 in selected_types %}selected{% endif %}>
+                                    {{ type.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Сортировка -->
+                    <div class="col-md-2">
+                        <select name="ordering" class="form-select">
+                            <option value="">Сортировка</option>
+                            <option value="title" {% if current_ordering == 'title' %}selected{% endif %}>По названию (А-Я)</option>
+                            <option value="-title" {% if current_ordering == '-title' %}selected{% endif %}>По названию (Я-А)</option>
+                            <option value="evaluation" {% if current_ordering == 'evaluation' %}selected{% endif %}>По оценке (↑)</option>
+                            <option value="-evaluation" {% if current_ordering == '-evaluation' %}selected{% endif %}>По оценке (↓)</option>
+                            <option value="created_at" {% if current_ordering == 'created_at' %}selected{% endif %}>Сначала старые</option>
+                            <option value="-created_at" {% if current_ordering == '-created_at' %}selected{% endif %}>Сначала новые</option>
+                        </select>
+                    </div>
+
+                    <!-- Кнопки -->
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary w-100">Применить</button>
+                        <a href="{% url 'content-list' %}" class="btn btn-outline-secondary w-100 mt-2">Сбросить</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {% if content %}
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <h1 class="mb-4 text-center display-4 fw-bold text-primary">Главная страница</h1>
+                <h1 class="mb-4 text-center display-4 fw-bold text-primary">
+                    {% if search_query or selected_types %}Результаты поиска{% else %}Главная страница{% endif %}
+                </h1>
                 {% for item in content %}
                 <div class="col">
-                    <div class="card h-100 shadow-lg border-0 overflow-hidden">
-                        <div style="position: relative;">
-                            <h2 class="card-title fw-bold text-truncate" style="padding-right: 30px;">{{ item.title }}</h2>
-                            {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'content-like' item.id %}" style="position: absolute; top: 0; right: 0;">
-                                {% csrf_token %}
-                                <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
-                                    {% if item.id in liked_contents %}❤️{% else %}🤍{% endif %}
-                                </button>
-                            </form>
+                    <a href="{% url 'content-detail' item.id %}" class="card-link">
+                        <div class="card h-100 shadow-lg border-0 overflow-hidden">
+                            <div style="position: relative;">
+                                <h2 class="card-title fw-bold text-truncate" style="padding-right: 30px;">{{ item.title }}</h2>
+                                {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'content-like' item.id %}" style="position: absolute; top: 0; right: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                                        {% if item.id in liked_contents %}❤️{% else %}🤍{% endif %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% if item.image %}
+                            <a href="{% url 'content-detail' item.id %}">
+                                <div class="position-relative">
+                                    <img src="{{ item.image }}">
+                                </div>
+                            </a>
                             {% endif %}
-                        </div>
 
-                        {% if item.image %}
-                        <div class="position-relative">
-                            <img src="{{ item.image }}" class="card-img-top">
-                        </div>
-                        {% endif %}
+                            <div class="card-body pb-0">
+                                <p class="card-content">Оценка контента: {{ item.evaluation }}</p>
+                                <p class="card-text text-muted">Описание: {{ item.summery|truncatechars:100 }}</p>
 
-                        <div class="card-body pb-0">
-                            <p class="card-content content-">Оценка контента: {{ item.evaluation }}</p>
-                            <p class="card-text text-muted">Описание: {{ item.summery|truncatechars:100 }}</p>
+                                <!-- Категория -->
+                                <div class="mb-3">
+                                    <span class="badge bg-info bg-opacity-10 text-info fs-6">
+                                        Тип контента: {{ item.type_content.title_type }}
+                                    </span>
+                                </div>
 
-                            <!-- Категория -->
-                            <div class="mb-3">
-                                <span class="badge bg-info bg-opacity-10 text-info fs-6">
-                                    <i class="bi bi-tag-fill"></i>Тип контента: {{ item.type_content.title_type }}
-                                </span>
-                            </div>
-
-                            <!-- Создатели -->
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="bi bi-people-fill text-muted me-2 fs-5"></i>
-                                <small class="text-muted">
-                                    Создатели:
-                                    {% for creator_content in item.creator %}
-                                        {{ creator_content.name }}{% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                </small>
+                                <!-- Создатели -->
+                                <div class="d-flex align-items-center mb-3">
+                                    <small class="text-muted">
+                                        Создатели:
+                                        {% for creator in item.creator.all %}
+                                            {{ creator.name }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% endfor %}
             </div>
-
         {% else %}
             <div class="alert alert-info text-center py-4">
-                <i class="bi bi-exclamation-circle-fill fs-1 d-block mb-3"></i>
                 <h4 class="fw-bold">Контент не найден</h4>
                 <p class="mb-0">Попробуйте изменить параметры поиска</p>
             </div>

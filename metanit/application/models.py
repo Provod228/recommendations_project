@@ -72,6 +72,7 @@ class Content(models.Model):
         ],
         help_text='Оценка от 1.0 до 10.0'
     )
+    created_at = models.DateTimeField(auto_now_add=True)
     reasons_to_buy = models.ManyToManyField(
         ReasonsToBuy,
         verbose_name="Причины опробовать данный контент",
