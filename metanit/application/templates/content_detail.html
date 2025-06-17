@@ -1,5 +1,144 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {{ content.id }}
+<div class="content-detail-container">
+    <!-- Hero-секция с изображением и основной информацией -->
+    <div class="content-hero" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ content.image.url }}') center/cover;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="content-poster">
+                        <img src="{{ content.image.url }}" alt="{{ content.title }}" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="content-meta">
+                        <h1 class="content-title">{{ content.title }}</h1>
+
+                        <div class="content-actions">
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'content-like' content.id %}" class="like-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-like">
+                                    {% if content.id in liked_contents %}
+                                    <span class="liked">❤️ В избранном</span>
+                                    {% else %}
+                                    <span>🤍 Добавить в избранное</span>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+
+                        <div class="content-rating">
+                            <div class="rating-value">
+                                <span class="score">{{ content.evaluation }}</span>
+                                <span class="max-score">/10</span>
+                            </div>
+                            <div class="rating-stars" data-rating="{{ content.evaluation|default:0 }}">
+                                {% for i in "12345" %}
+                                    <span class="star">
+                                        <span class="star-background">★</span>
+                                        <span class="star-foreground">★</span>
+                                    </span>
+                                {% endfor %}
+                            </div>
+
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const ratingElements = document.querySelectorAll('.rating-stars');
+
+                                ratingElements.forEach(element => {
+                                    const rating = parseFloat(element.dataset.rating) / 2; // Преобразуем 10-балльную в 5-балльную
+                                    const stars = element.querySelectorAll('.star');
+
+                                    stars.forEach((star, index) => {
+                                        const starNum = index + 1;
+                                        const foreground = star.querySelector('.star-foreground');
+
+                                        if (rating >= starNum) {
+                                            foreground.style.width = '100%';
+                                        } else if (rating > starNum - 1) {
+                                            const fillPercent = (rating - (starNum - 1)) * 100;
+                                            foreground.style.width = `${fillPercent}%`;
+                                        } else {
+                                            foreground.style.width = '0%';
+                                        }
+                                    });
+                                });
+                            });
+                            </script>
+                        </div>
+
+                        <div class="content-type-badge">
+                            <span class="badge">{{ content.type_content.title_type }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container content-main">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Описание -->
+                <section class="content-section">
+                    <h2 class="section-title">Об этом контенте</h2>
+                    <div class="content-description">
+                        <p>{{ content.summery }}</p>
+                    </div>
+                </section>
+
+                <!-- Создатели -->
+                <section class="content-section">
+                    <h2 class="section-title">Создатели</h2>
+                    <div class="creators-grid">
+                        {% for creator in content.creator.all %}
+                        <div class="creator-card">
+                            <div class="creator-name">{{ creator.name }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Боковая панель с дополнительной информацией -->
+                <div class="content-sidebar">
+                    <!-- Причины попробовать -->
+                    {% if content.reasons_to_buy.all %}
+                    <section class="sidebar-section">
+                        <h3 class="sidebar-title">Почему стоит попробовать</h3>
+                        <ul class="reasons-list">
+                            {% for reason in content.reasons_to_buy.all %}
+                            <li class="reason-item">
+                                <span class="reason-icon">✓</span>
+                                <span class="reason-text">{{ reason }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                    {% endif %}
+
+                    <!-- Детали -->
+                    <section class="sidebar-section">
+                        <h3 class="sidebar-title">Детали</h3>
+                        <div class="details-list">
+                            <div class="detail-item">
+                                <span class="detail-label">Дата добавления на сайт:</span>
+                                <span class="detail-value">{{ content.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Тип:</span>
+                                <span class="detail-value">{{ content.type_content.title_type }}</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

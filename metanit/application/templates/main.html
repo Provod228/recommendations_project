@@ -2,51 +2,6 @@
 
 {% block content %}
     <div class="container my-5">
-        <!-- Поисковая строка с фильтрами и сортировкой -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <form method="get" class="row g-3">
-                    <!-- Поисковая строка -->
-                    <div class="col-md-6">
-                        <input type="text" name="search" class="form-control"
-                               placeholder="Поиск по названию, описанию, типу..."
-                               value="{{ search_query }}">
-                    </div>
-
-                    <!-- Фильтр по типам контента -->
-                    <div class="col-md-3">
-                        <select name="type_content" class="form-select" multiple aria-label="Фильтр по типам">
-                            {% for type in type_content_choices %}
-                                <option value="{{ type.0 }}"
-                                    {% if type.0 in selected_types %}selected{% endif %}>
-                                    {{ type.1 }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Сортировка -->
-                    <div class="col-md-2">
-                        <select name="ordering" class="form-select">
-                            <option value="">Сортировка</option>
-                            <option value="title" {% if current_ordering == 'title' %}selected{% endif %}>По названию (А-Я)</option>
-                            <option value="-title" {% if current_ordering == '-title' %}selected{% endif %}>По названию (Я-А)</option>
-                            <option value="evaluation" {% if current_ordering == 'evaluation' %}selected{% endif %}>По оценке (↑)</option>
-                            <option value="-evaluation" {% if current_ordering == '-evaluation' %}selected{% endif %}>По оценке (↓)</option>
-                            <option value="created_at" {% if current_ordering == 'created_at' %}selected{% endif %}>Сначала старые</option>
-                            <option value="-created_at" {% if current_ordering == '-created_at' %}selected{% endif %}>Сначала новые</option>
-                        </select>
-                    </div>
-
-                    <!-- Кнопки -->
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary w-100">Применить</button>
-                        <a href="{% url 'content-list' %}" class="btn btn-outline-secondary w-100 mt-2">Сбросить</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         {% if content %}
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <h1 class="mb-4 text-center display-4 fw-bold text-primary">
@@ -90,7 +45,7 @@
                                 <div class="d-flex align-items-center mb-3">
                                     <small class="text-muted">
                                         Создатели:
-                                        {% for creator in item.creator.all %}
+                                        {% for creator in item.creator %}
                                             {{ creator.name }}{% if not forloop.last %}, {% endif %}
                                         {% endfor %}
                                     </small>

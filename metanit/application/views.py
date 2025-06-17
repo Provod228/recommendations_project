@@ -1,12 +1,12 @@
 from django.db.models import Q
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, MultipleChoiceFilter
-from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Content
 from .serializers import ContentSerializer
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from .recommendation_service import RecommendationEngine
 from django.shortcuts import redirect
 from .forms import SignUpUserForm
@@ -49,7 +49,7 @@ class RecommendationsView(APIView):
         serialized_content = ContentSerializer(filtered_recommended, many=True).data
 
         return Response({
-            "recommended_content": serialized_content,  # Используем сериализованные данные
+            "recommended_content": serialized_content,
             "liked_contents": list(liked_content_ids),
             "user": request.user
         })
@@ -110,7 +110,7 @@ class ProfileUserView(APIView):
             request.user.content_like.add(content)
             liked = True
 
-        # Для AJAX-запросов возвращаем JSON
+
         if request.accepted_renderer.format == 'json':
             return Response({
                 "liked": liked,
@@ -118,7 +118,7 @@ class ProfileUserView(APIView):
                 "content_id": content_id
             })
 
-        # Для обычных запросов перенаправляем обратно
+
         return redirect(request.META.get('HTTP_REFERER', 'content-list'))
 
 
@@ -128,10 +128,16 @@ class ContentDetailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request: None, id: int) -> Response:
+        liked_contents_ids = []
+        if request.user.is_authenticated:  # Проверяем, авторизован ли пользователь
+            liked_content = request.user.content_like.all()
+            liked_contents_ids = list(liked_content.values_list('id', flat=True))
+
         content = Content.objects.get(pk=id)
         return Response({
             'content': content,
-                         })
+            'liked_contents': liked_contents_ids,
+        })
 
 
 class ContentFilter(FilterSet):

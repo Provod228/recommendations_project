@@ -1,10 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Нажмите кнопку 'регистрация' для регистрации пользователя</p>
-<form method="post" action="{% url 'signup' %}">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Регистрация" />
-</form>
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Создать аккаунт</h2>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      <div class="form-field">
+        <label for="id_username">Имя пользователя:</label>
+        {{ form.username }}
+        <div class="form-help-text">
+          Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="id_email">Email адрес:</label>
+        {{ form.email }}
+      </div>
+
+      <div class="form-field">
+        <label for="id_password1">Пароль:</label>
+        {{ form.password1 }}
+        <div class="form-help-text">
+          <ul>
+            <li>Ваш пароль не должен быть слишком похож на другую вашу личную информацию.</li>
+            <li>Ваш пароль должен содержать как минимум 8 символов.</li>
+            <li>Ваш пароль не должен быть часто используемым паролем.</li>
+            <li>Ваш пароль не может состоять только из цифр.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="id_password2">Подтверждение пароля:</label>
+        {{ form.password2 }}
+        <div class="form-help-text">
+          Для подтверждения введите, пожалуйста, пароль ещё раз.
+        </div>
+      </div>
+
+      <button type="submit" class="auth-button">Зарегистрироваться</button>
+    </form>
+    <p class="auth-link">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+  </div>
+</div>
 {% endblock %}

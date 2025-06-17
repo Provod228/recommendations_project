@@ -1,39 +1,48 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
-{% if form.errors %}
-  <p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Вход в систему</h2>
 
-{% if next %}
-  {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-  {% else %}
-    <p>Please login to see this page.</p>
-  {% endif %}
-{% endif %}
+    {% if form.errors %}
+      <div class="auth-error">
+        <p>Неверное имя пользователя или пароль. Пожалуйста, попробуйте снова.</p>
+      </div>
+    {% endif %}
 
-<form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
+    {% if next %}
+      {% if user.is_authenticated %}
+        <div class="auth-message">
+          <p>Ваш аккаунт не имеет доступа к этой странице. Пожалуйста, войдите с аккаунтом, у которого есть доступ.</p>
+        </div>
+      {% else %}
+        <div class="auth-message">
+          <p>Пожалуйста, войдите, чтобы увидеть эту страницу.</p>
+        </div>
+      {% endif %}
+    {% endif %}
 
-    <tr>
-      <td>{{ form.username.label_tag }}</td>
-      <td>{{ form.username }}</td>
-    </tr>
+    <form method="post" action="{% url 'login' %}" class="auth-form">
+      {% csrf_token %}
 
-    <tr>
-      <td>{{ form.password.label_tag }}</td>
-      <td>{{ form.password }}</td>
-    </tr>
-    </table>
+      <div class="form-field">
+        <label for="id_username">Имя пользователя:</label>
+        {{ form.username }}
+      </div>
 
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-</form>
-<p><a href="{% url 'signup' %}">Регистрация?</a></p>
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+      <div class="form-field">
+        <label for="id_password">Пароль:</label>
+        {{ form.password }}
+      </div>
 
+      <button type="submit" class="auth-button">Войти</button>
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+    <div class="auth-links">
+        <p class="auth-link">Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+    </div>
+  </div>
+</div>
 {% endblock %}

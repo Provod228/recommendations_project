@@ -10,45 +10,43 @@
             <div class="col">
                 <a href="{% url 'content-detail' item.id %}" class="card-link">
                     <div class="card h-100 shadow-lg border-0 overflow-hidden">
-                        <div class="card h-100 shadow-lg border-0 overflow-hidden">
-                            <div style="position: relative;">
-                                <h2 class="card-title fw-bold text-truncate" style="padding-right: 30px;">{{ item.title }}</h2>
-                                {% if user.is_authenticated %}
-                                <form method="post" action="{% url 'content-like' item.id %}" style="position: absolute; top: 0; right: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
-                                        {% if item.id in liked_contents %}❤️{% else %}🤍{% endif %}
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </div>
-
-                            {% if item.image %}
-                            <div class="position-relative">
-                                <img src="{{ item.image }}" class="card-img-top">
-                            </div>
+                        <div style="position: relative;">
+                            <h2 class="card-title fw-bold text-truncate" style="padding-right: 30px;">{{ item.title }}</h2>
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'content-like' item.id %}" style="position: absolute; top: 0; right: 0;">
+                                {% csrf_token %}
+                                <button type="submit" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                                    {% if item.id in liked_contents %}❤️{% else %}🤍{% endif %}
+                                </button>
+                            </form>
                             {% endif %}
+                        </div>
 
-                            <div class="card-body pb-0">
-                                <p class="card-text text-muted">{{ item.summery|truncatechars:100 }}</p>
+                        {% if item.image %}
+                        <div class="position-relative">
+                            <img src="{{ item.image }}" class="card-img-top">
+                        </div>
+                        {% endif %}
 
-                                <!-- Категория -->
-                                <div class="mb-3">
-                                    <span class="badge bg-info bg-opacity-10 text-info fs-6">
-                                        <i class="bi bi-tag-fill"></i>Тип контента: {{ item.type_content.title_type }}
-                                    </span>
-                                </div>
+                        <div class="card-body pb-0">
+                            <p class="card-text text-muted">{{ item.summery|truncatechars:100 }}</p>
 
-                                <!-- Создатели -->
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="bi bi-people-fill text-muted me-2 fs-5"></i>
-                                    <small class="text-muted">
-                                        Создатели:
-                                        {% for creator_content in item.creator.all %}  <!-- Добавлен .all -->
-                                            {{ creator_content.name }}{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    </small>
-                                </div>
+                            <!-- Категория -->
+                            <div class="mb-3">
+                                <span class="badge bg-info bg-opacity-10 text-info fs-6">
+                                    <i class="bi bi-tag-fill"></i>Тип контента: {{ item.type_content.title_type }}
+                                </span>
+                            </div>
+
+                            <!-- Создатели -->
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-people-fill text-muted me-2 fs-5"></i>
+                                <small class="text-muted">
+                                    Создатели:
+                                    {% for creator_content in item.creator %}
+                                        {{ creator_content.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </small>
                             </div>
                         </div>
                     </div>

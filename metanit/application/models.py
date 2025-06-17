@@ -140,7 +140,7 @@ class UserInteraction(models.Model):
     viewed = models.BooleanField(default=False)
     liked = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-    time_spent = models.FloatField(default=0.0)  # в минутах
+    time_spent = models.FloatField(default=0.0)
 
     class Meta:
         unique_together = ('user', 'content')

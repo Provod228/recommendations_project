@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Embedding, Flatten, Dot, Dense, Concatenate
+from tensorflow.keras.layers import Input, Embedding, Flatten, Dense, Concatenate
 from tensorflow.keras.optimizers import Adam
 from django.db.models import Count, Avg
 from .models import *
