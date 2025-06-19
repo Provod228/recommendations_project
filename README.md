@@ -265,3 +265,63 @@ class SignUpUserForm(UserCreationForm):
         fields = ('username', 'email')
 ```
 #### Разбор тестов
+В данном проекте используется библиотека pytest, как самая лучшая в своей стези.
+1) conftest.py  - файл где хранятся фикстуры, которые используются много раз или же дублируются в разных файлах
+```
+import pytest  
+from application.models import Content  
+  
+  
+@pytest.fixture(scope='function')  
+def test_url(request: None) -> str:  
+    return 'http://127.0.0.1:8000/'  
+  
+  
+@pytest.fixture(scope='function')  
+def test_content_id(db) -> list:  
+    return [str(content.id) for content in Content.objects.all()]
+```
+2) test_urls.py - тесты работающих url, которые тестируются при запуске самого сайта.
+```
+import pytest  
+from application.models import Content  
+  
+  
+@pytest.fixture(scope='function')  
+def test_url(request: None) -> str:  
+    return 'http://127.0.0.1:8000/'  
+  
+  
+@pytest.fixture(scope='function')  
+def test_content_id(db) -> list:  
+    return [str(content.id) for content in Content.objects.all()]
+```
+3) test_views.py - тесты вьюшек.
+```
+from django.urls import reverse  
+from rest_framework.test import APIClient  
+from mixer.backend.django import mixer  
+from django.test import TestCase  
+from application.models import Content, User, TypeContent  
+  
+  
+@pytest.mark.django_db  
+class TestRecommendationsView(TestCase):  
+    def setUp(self):  
+        self.client = APIClient()  
+        self.user = mixer.blend(User)  
+        self.content = mixer.blend(Content)  
+        self.url = reverse('recommendations')  
+  
+    def test_recommendations_view_works(self):  
+        self.client.force_authenticate(user=self.user)  
+        response = self.client.get(self.url)  
+        assert response.status_code == 200  
+        assert 'recommended_content' in response.data  
+        assert 'liked_contents' in response.data  
+        assert 'user' in response.data  
+  
+    def test_recommendations_unauthenticated(self):  
+        response = self.client.get(self.url)  
+        assert response.status_code == 200  # AllowAny permission
+```
