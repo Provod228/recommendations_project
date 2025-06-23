@@ -2,11 +2,11 @@
 Это Django веб-сайт, который предоставляет информацию об играх, фильмах, сериалах и т.д. В нем реализована система рекомендаций, на основе глубокого обучения, опираясь на оценку самого контента предоставляемой админом(в основном берется средняя арифметическая с сайтов, которые оценивают) и контента который нравиться пользователю.
 
 ### Как выглядит веб-сайт на самом деле!
-1) Главная страница сайта, где просто выгружается весь контент, без сортировок. Но на ней видеться поиск интересующего контента(поисковая строка в правом левом углу). В добавок если понравился контент можно пометить его, нажав на сердечко справа верхнем углу карточки контента(серая - если не нравиться, красная - нравиться).![[Pasted image 20250617124525.png]]
-2) Страница рекомендаций, в ней обычно появляется контент который скорее всего придет по вкусу пользователя, в добавок, там не отображается контент который уже нравится пользователю, что увеличивает шансы найти интересующий пользователя контент. Если пользователь не авторизован, то система по умолчанию будет ставить контент который больше всего оценивается админом.![[Pasted image 20250617130113.png]]
-3) Страница профиля пользователя, в ней отображается частичная информация о пользователе и контент, который ему нравится.![[Pasted image 20250617130402.png]]
-4) На всех страницах можно было нажать на картинку карточки контента и узнать подробную информацию. Здесь можно узнать оценку контента, описание, создателей, причины попробовать, мелкие детали и так же добавить в избранное.![[Pasted image 20250617130706.png]]![[Pasted image 20250617130717.png]]
-5) Так же можно выйти(серая дверь), зайти(светлая дверь) и зарегистрироваться на сайте, для того чтобы разблокировать более точный подбор контента для каждого пользователя.![[Pasted image 20250617132331.png]]![[Pasted image 20250617132410.png]]
+1) Главная страница сайта, где просто выгружается весь контент, без сортировок. Но на ней видеться поиск интересующего контента(поисковая строка в правом левом углу). В добавок если понравился контент можно пометить его, нажав на сердечко справа верхнем углу карточки контента(серая - если не нравиться, красная - нравиться).![Pasted image 20250617124525.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617124525.png)
+2) Страница рекомендаций, в ней обычно появляется контент который скорее всего придет по вкусу пользователя, в добавок, там не отображается контент который уже нравится пользователю, что увеличивает шансы найти интересующий пользователя контент. Если пользователь не авторизован, то система по умолчанию будет ставить контент который больше всего оценивается админом.![Pasted image 20250617130113.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617130113.png)
+3) Страница профиля пользователя, в ней отображается частичная информация о пользователе и контент, который ему нравится.![Pasted image 20250617130402.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617130402.png)
+4) На всех страницах можно было нажать на картинку карточки контента и узнать подробную информацию. Здесь можно узнать оценку контента, описание, создателей, причины попробовать, мелкие детали и так же добавить в избранное.![Pasted image 20250617130706.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617130706.png)![Pasted image 20250617130717.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617130717.png)
+5) Так же можно выйти(серая дверь), зайти(светлая дверь) и зарегистрироваться на сайте, для того чтобы разблокировать более точный подбор контента для каждого пользователя.![Pasted image 20250617132331.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617132331.png)![Pasted image 20250617132410.png](https://github.com/Provod228/recommendations_project/blob/main/image_files/Pasted%20image%2020250617132410.png)
 ### Как запустить проект.
 1. Установите IDE(PyCharm может сам установить python) или python на ваше устройство.
 2. Создайте папку и зайдите в папку с этой командой.
@@ -265,3 +265,63 @@ class SignUpUserForm(UserCreationForm):
         fields = ('username', 'email')
 ```
 #### Разбор тестов
+В данном проекте используется библиотека pytest, как самая лучшая в своей стези.
+1) conftest.py  - файл где хранятся фикстуры, которые используются много раз или же дублируются в разных файлах
+```
+import pytest  
+from application.models import Content  
+  
+  
+@pytest.fixture(scope='function')  
+def test_url(request: None) -> str:  
+    return 'http://127.0.0.1:8000/'  
+  
+  
+@pytest.fixture(scope='function')  
+def test_content_id(db) -> list:  
+    return [str(content.id) for content in Content.objects.all()]
+```
+2) test_urls.py - тесты работающих url, которые тестируются при запуске самого сайта.
+```
+import pytest  
+from application.models import Content  
+  
+  
+@pytest.fixture(scope='function')  
+def test_url(request: None) -> str:  
+    return 'http://127.0.0.1:8000/'  
+  
+  
+@pytest.fixture(scope='function')  
+def test_content_id(db) -> list:  
+    return [str(content.id) for content in Content.objects.all()]
+```
+3) test_views.py - тесты вьюшек.
+```
+from django.urls import reverse  
+from rest_framework.test import APIClient  
+from mixer.backend.django import mixer  
+from django.test import TestCase  
+from application.models import Content, User, TypeContent  
+  
+  
+@pytest.mark.django_db  
+class TestRecommendationsView(TestCase):  
+    def setUp(self):  
+        self.client = APIClient()  
+        self.user = mixer.blend(User)  
+        self.content = mixer.blend(Content)  
+        self.url = reverse('recommendations')  
+  
+    def test_recommendations_view_works(self):  
+        self.client.force_authenticate(user=self.user)  
+        response = self.client.get(self.url)  
+        assert response.status_code == 200  
+        assert 'recommended_content' in response.data  
+        assert 'liked_contents' in response.data  
+        assert 'user' in response.data  
+  
+    def test_recommendations_unauthenticated(self):  
+        response = self.client.get(self.url)  
+        assert response.status_code == 200  # AllowAny permission
+```
